@@ -1,0 +1,12 @@
+<%
+  settings = Setting.plugin_redmine_star_rating
+  return unless settings['enable_issue_rating']
+%>
+<div class="rateable-rating-container rateable-issue-rating">
+  <%= render partial: 'rateable_ratings/stars',
+             locals: {
+               rateable_type: 'Issue',
+               rateable_id: @issue.id,
+               rateable: @issue
+             } %>
+</div>

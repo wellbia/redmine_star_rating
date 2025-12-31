@@ -1,0 +1,131 @@
+/* Star Rating Widget Styles */
+
+.rateable-rating-container {
+  margin: 10px 0;
+  padding: 8px 0;
+}
+
+.rateable-issue-rating {
+  border-top: 1px solid #e4e4e4;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+
+.rateable-journal-rating {
+  margin-top: 8px;
+}
+
+.rateable-rating-widget {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.rateable-stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.rateable-star {
+  font-size: 20px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.1s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.rateable-star:hover {
+  transform: scale(1.1);
+}
+
+.rateable-star.filled {
+  color: #f5c518;
+}
+
+.rateable-star.avg-filled {
+  color: #ffd700;
+  opacity: 0.6;
+}
+
+.rateable-star.highlighted {
+  color: #f5c518;
+}
+
+/* Read-only state */
+.rateable-readonly .rateable-star {
+  cursor: default;
+}
+
+.rateable-readonly .rateable-star:hover {
+  transform: none;
+}
+
+/* Loading state */
+.rateable-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.rateable-loading .rateable-stars::after {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+  border: 2px solid #ccc;
+  border-top-color: #666;
+  border-radius: 50%;
+  animation: rateable-spin 0.8s linear infinite;
+}
+
+@keyframes rateable-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Stats display */
+.rateable-stats {
+  color: #666;
+  font-size: 13px;
+}
+
+.rateable-avg {
+  font-weight: bold;
+  color: #333;
+}
+
+.rateable-count {
+  color: #888;
+}
+
+/* Dark theme support (if Redmine has dark theme) */
+@media (prefers-color-scheme: dark) {
+  .rateable-star {
+    color: #555;
+  }
+
+  .rateable-star.filled,
+  .rateable-star.highlighted {
+    color: #f5c518;
+  }
+
+  .rateable-star.avg-filled {
+    color: #ffd700;
+    opacity: 0.5;
+  }
+
+  .rateable-stats {
+    color: #aaa;
+  }
+
+  .rateable-avg {
+    color: #ddd;
+  }
+
+  .rateable-issue-rating {
+    border-top-color: #444;
+  }
+}

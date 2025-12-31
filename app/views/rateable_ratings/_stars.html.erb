@@ -1,0 +1,60 @@
+<%#
+  Params:
+  - rateable_type: "Issue" or "Journal"
+  - rateable_id: ID of the rateable object
+  - rateable: the actual object (Issue or Journal)
+%>
+<%
+  settings = Setting.plugin_redmine_star_rating
+
+  # Get current user's rating
+  my_rating = nil
+  if User.current.logged?
+    my_rating = RateableRating.find_by(
+      rateable_type: rateable_type,
+      rateable_id: rateable_id,
+      user_id: User.current.id
+    )
+  end
+  my_score = my_rating&.score || 0
+
+  # Get stats
+  stats = RateableRating.stats_for(rateable_type, rateable_id)
+  avg = stats[:avg]
+  count = stats[:count]
+
+  # Check if user can rate
+  can_rate = User.current.logged? && User.current.allowed_to_globally?(:rate_rateables)
+
+  # Check self-rating
+  author = rateable_type == 'Issue' ? rateable.author : rateable.user
+  is_own_content = author == User.current
+  allow_self = settings['allow_self_rating']
+  can_rate = can_rate && (allow_self || !is_own_content)
+%>
+
+<div class="rateable-rating-widget"
+     data-rateable-type="<%= rateable_type %>"
+     data-rateable-id="<%= rateable_id %>"
+     data-my-score="<%= my_score %>"
+     data-can-rate="<%= can_rate %>">
+  <div class="rateable-stars">
+    <% (1..5).each do |star| %>
+      <span class="rateable-star <%= star <= my_score ? 'filled' : '' %> <%= star <= avg.round ? 'avg-filled' : '' %>"
+            data-score="<%= star %>"
+            title="<%= star %> / 5">
+        <% if star <= my_score %>
+          &#9733;
+        <% elsif star <= avg.round %>
+          &#9733;
+        <% else %>
+          &#9734;
+        <% end %>
+      </span>
+    <% end %>
+  </div>
+  <span class="rateable-stats">
+    <span class="rateable-avg"><%= avg > 0 ? sprintf('%.1f', avg) : '-' %></span>
+    (<span class="rateable-count"><%= count %></span>)
+  </span>
+</div>

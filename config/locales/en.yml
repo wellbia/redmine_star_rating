@@ -1,0 +1,5 @@
+en:
+  label_enable_issue_rating: "Enable issue rating"
+  label_enable_journal_rating: "Enable journal (comment) rating"
+  label_allow_self_rating: "Allow users to rate their own content"
+  permission_rate_rateables: "Rate issues and comments"

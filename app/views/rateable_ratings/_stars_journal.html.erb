@@ -1,0 +1,13 @@
+<%
+  settings = Setting.plugin_redmine_star_rating
+  return unless settings['enable_journal_rating']
+  return unless defined?(journal) && journal.present?
+%>
+<div class="rateable-rating-container rateable-journal-rating">
+  <%= render partial: 'rateable_ratings/stars',
+             locals: {
+               rateable_type: 'Journal',
+               rateable_id: journal.id,
+               rateable: journal
+             } %>
+</div>
