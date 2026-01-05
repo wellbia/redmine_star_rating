@@ -29,7 +29,7 @@
   # Check self-rating
   author = rateable_type == 'Issue' ? rateable.author : rateable.user
   is_own_content = author == User.current
-  allow_self = settings['allow_self_rating']
+  allow_self = settings['allow_self_rating'].to_s == 'true'
   can_rate = can_rate && (allow_self || !is_own_content)
 %>
 

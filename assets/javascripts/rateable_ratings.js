@@ -16,6 +16,9 @@
 
   function initRateableRatings() {
     var widgets = document.querySelectorAll('.rateable-rating-widget');
+    if (widgets.length > 0) {
+      console.log('RateableRatings: Found ' + widgets.length + ' widgets');
+    }
 
     widgets.forEach(function(widget) {
       // Skip if already initialized
@@ -27,6 +30,13 @@
       var canRate = widget.dataset.canRate === 'true';
       if (!canRate) {
         widget.classList.add('rateable-readonly');
+        // Add click listener to log why it's read-only
+        var stars = widget.querySelectorAll('.rateable-star');
+        stars.forEach(function(star) {
+          star.addEventListener('click', function() {
+            console.log('RateableRatings: Widget is read-only. Check permissions or self-rating settings.');
+          });
+        });
         return;
       }
 
@@ -49,6 +59,10 @@
         // Click to rate
         star.addEventListener('click', function() {
           var score = parseInt(star.dataset.score, 10);
+          if (isNaN(score)) {
+            console.error('RateableRatings: Invalid score');
+            return;
+          }
           submitRating(widget, rateableType, rateableId, score);
         });
       });

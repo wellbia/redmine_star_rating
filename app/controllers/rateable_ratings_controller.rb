@@ -71,7 +71,7 @@ class RateableRatingsController < ApplicationController
     return if @rateable.nil?
 
     settings = Setting.plugin_redmine_star_rating
-    allow_self = settings['allow_self_rating']
+    allow_self = settings['allow_self_rating'].to_s == 'true'
 
     author = case @rateable_type
              when 'Issue'

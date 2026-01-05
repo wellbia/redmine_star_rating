@@ -11,7 +11,7 @@ module RedmineStarRating
     # Insert rating UI below issue description
     render_on :view_issues_show_description_bottom, partial: 'rateable_ratings/stars_issue'
 
-    # Insert rating UI for each journal
-    render_on :view_journals_notes_form_after_notes, partial: 'rateable_ratings/stars_journal'
+    # Insert rating UI for each journal (below the journal content)
+    render_on :view_issues_history_journal_bottom, partial: 'rateable_ratings/stars_journal'
   end
 end

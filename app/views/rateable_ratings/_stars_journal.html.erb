@@ -2,6 +2,8 @@
   settings = Setting.plugin_redmine_star_rating
   return unless settings['enable_journal_rating']
   return unless defined?(journal) && journal.present?
+  # 이력만 있고 코멘트(notes)가 없는 경우 별점 표시하지 않음
+  return unless journal.notes.present?
 %>
 <div class="rateable-rating-container rateable-journal-rating">
   <%= render partial: 'rateable_ratings/stars',

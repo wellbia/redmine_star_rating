@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rating Test</title>
+  <style>
+    /* Copy CSS here */
+    .rateable-rating-widget { display: inline-flex; gap: 8px; }
+    .rateable-stars { display: inline-flex; gap: 2px; }
+    .rateable-star { font-size: 20px; color: #ccc; cursor: pointer; }
+    .rateable-star.filled { color: #f5c518; }
+    .rateable-readonly .rateable-star { cursor: default; }
+  </style>
+</head>
+<body>
+  <div class="rateable-rating-widget"
+       data-rateable-type="Issue"
+       data-rateable-id="1"
+       data-my-score="0"
+       data-can-rate="true">
+    <div class="rateable-stars">
+      <span class="rateable-star" data-score="1" title="1 / 5">&#9734;</span>
+      <span class="rateable-star" data-score="2" title="2 / 5">&#9734;</span>
+      <span class="rateable-star" data-score="3" title="3 / 5">&#9734;</span>
+      <span class="rateable-star" data-score="4" title="4 / 5">&#9734;</span>
+      <span class="rateable-star" data-score="5" title="5 / 5">&#9734;</span>
+    </div>
+  </div>
+
+  <script>
+    // Mock fetch
+    window.fetch = function(url, options) {
+      console.log('Fetch called:', url, options);
+      return Promise.resolve({
+        ok: true,
+        json: function() {
+          return Promise.resolve({
+            avg: 3.5,
+            count: 10,
+            my_score: JSON.parse(options.body).score
+          });
+        }
+      });
+    };
+
+    // Mock CSRF token
+    document.head.innerHTML += '<meta name="csrf-token" content="test-token">';
+
+    // Copy JS here
+    (function() {
+      'use strict';
+
+      document.addEventListener('DOMContentLoaded', function() {
+        initRateableRatings();
+      });
+
+      function initRateableRatings() {
+        var widgets = document.querySelectorAll('.rateable-rating-widget');
+        console.log('Found widgets:', widgets.length);
+
+        widgets.forEach(function(widget) {
+          if (widget.dataset.initialized === 'true') {
+            return;
+          }
+          widget.dataset.initialized = 'true';
+
+          var canRate = widget.dataset.canRate === 'true';
+          console.log('Can rate:', canRate);
+          if (!canRate) {
+            widget.classList.add('rateable-readonly');
+            return;
+          }
+
+          var stars = widget.querySelectorAll('.rateable-star');
+          var rateableType = widget.dataset.rateableType;
+          var rateableId = widget.dataset.rateableId;
+
+          stars.forEach(function(star) {
+            star.addEventListener('click', function() {
+              console.log('Star clicked:', star.dataset.score);
+              var score = parseInt(star.dataset.score, 10);
+              submitRating(widget, rateableType, rateableId, score);
+            });
+          });
+        });
+      }
+
+      function submitRating(widget, rateableType, rateableId, score) {
+        console.log('Submitting rating:', score);
+        // ... rest of the function
+      }
+    })();
+  </script>
+</body>
+</html>
