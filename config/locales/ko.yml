@@ -1,4 +1,5 @@
 ko:
+  project_module_star_rating: "별점 평가"
   label_enable_issue_rating: "이슈 평점 활성화"
   label_enable_journal_rating: "코멘트(저널) 평점 활성화"
   label_allow_self_rating: "자기 글 평가 허용"

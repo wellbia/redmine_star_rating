@@ -1,4 +1,5 @@
 en:
+  project_module_star_rating: "Star Rating"
   label_enable_issue_rating: "Enable issue rating"
   label_enable_journal_rating: "Enable journal (comment) rating"
   label_allow_self_rating: "Allow users to rate their own content"
