@@ -4,11 +4,11 @@ require_relative 'lib/redmine_star_rating/hooks'
 
 Redmine::Plugin.register :redmine_star_rating do
   name 'Redmine Star Rating'
-  author 'Your Name'
+  author 'wellbia'
   description 'A polymorphic star rating plugin for Issues and Journals (comments)'
   version '1.0.0'
-  url 'https://github.com/your-repo/redmine_star_rating'
-  author_url 'https://github.com/your-name'
+  url 'https://github.com/wellbia/redmine_star_rating'
+  author_url 'https://github.com/wellbia'
 
   requires_redmine version_or_higher: '5.0.0'
 
