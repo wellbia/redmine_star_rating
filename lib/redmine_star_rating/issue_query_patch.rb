@@ -4,21 +4,28 @@ module RedmineStarRating
   module IssueQueryPatch
     def self.included(base)
       base.class_eval do
-        # Filter 1: Issue ratings only
-        add_available_filter 'star_rating_issue_avg',
-                             type: :float,
-                             name: I18n.t(:label_star_rating_issue_avg, default: 'Issue Star Rating')
-
-        # Filter 2: Journal (comment) ratings only
-        add_available_filter 'star_rating_journal_avg',
-                             type: :float,
-                             name: I18n.t(:label_star_rating_journal_avg, default: 'Comment Star Rating')
-
-        # Filter 3: All ratings combined (issue + journals)
-        add_available_filter 'star_rating_all_avg',
-                             type: :float,
-                             name: I18n.t(:label_star_rating_all_avg, default: 'Total Star Rating')
+        alias_method :initialize_available_filters_without_star_rating, :initialize_available_filters
+        alias_method :initialize_available_filters, :initialize_available_filters_with_star_rating
       end
+    end
+
+    def initialize_available_filters_with_star_rating
+      initialize_available_filters_without_star_rating
+
+      # Filter 1: Issue ratings only
+      add_available_filter 'star_rating_issue_avg',
+                           type: :float,
+                           name: I18n.t(:label_star_rating_issue_avg, default: 'Issue Star Rating')
+
+      # Filter 2: Journal (comment) ratings only
+      add_available_filter 'star_rating_journal_avg',
+                           type: :float,
+                           name: I18n.t(:label_star_rating_journal_avg, default: 'Comment Star Rating')
+
+      # Filter 3: All ratings combined (issue + journals)
+      add_available_filter 'star_rating_all_avg',
+                           type: :float,
+                           name: I18n.t(:label_star_rating_all_avg, default: 'Total Star Rating')
     end
 
     # Filter 1: Issue ratings only
