@@ -4,3 +4,5 @@ en:
   label_enable_journal_rating: "Enable journal (comment) rating"
   label_allow_self_rating: "Allow users to rate their own content"
   permission_rate_rateables: "Rate issues and comments"
+  label_star_rating_avg: "Average Star Rating"
+  field_star_rating_avg: "Average Star Rating"
