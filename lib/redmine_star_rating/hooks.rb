@@ -13,5 +13,14 @@ module RedmineStarRating
 
     # Insert rating UI for each journal (below the journal content)
     render_on :view_issues_history_journal_bottom, partial: 'rateable_ratings/stars_journal'
+
+    # Add rating data to issue API response
+    def view_issues_show_details_bottom(context = {})
+      issue = context[:issue]
+      api = context[:api]
+      return '' unless api && issue && (request.format.json? || request.format.xml?)
+      
+      render partial: 'rateable_ratings/issue_api_rating', locals: { issue: issue, api: api }
+    end
   end
 end

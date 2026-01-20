@@ -1,0 +1,8 @@
+<%# Add rating data to journal API response %>
+<% if defined?(RateableRating) %>
+  <% stats = journal.rateable_avg %>
+  api.rateable_avg do
+    api.avg stats[:avg]
+    api.count stats[:count]
+  end
+<% end %>

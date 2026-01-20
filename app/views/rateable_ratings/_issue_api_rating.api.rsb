@@ -1,0 +1,8 @@
+<%# Add rating data to issue API response %>
+<% if defined?(RateableRating) %>
+  <% stats = @issue.rateable_avg %>
+  api.rateable_avg do
+    api.avg stats[:avg]
+    api.count stats[:count]
+  end
+<% end %>
