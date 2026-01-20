@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'lib/redmine_star_rating/hooks'
-require_relative 'lib/redmine_star_rating/issue_patch'
+require_relative 'lib/redmine_star_rating/issue_query_patch'
 
 Redmine::Plugin.register :redmine_star_rating do
   name 'Redmine Star Rating'
