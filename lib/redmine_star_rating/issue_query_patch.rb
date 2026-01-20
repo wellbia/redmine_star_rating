@@ -4,16 +4,25 @@ module RedmineStarRating
   module IssueQueryPatch
     def self.included(base)
       base.class_eval do
-        # Add the star rating filter
-        add_available_filter 'star_rating_avg',
+        # Filter 1: Issue ratings only
+        add_available_filter 'star_rating_issue_avg',
                              type: :float,
-                             name: I18n.t(:label_star_rating_avg, default: 'Average Star Rating')
+                             name: I18n.t(:label_star_rating_issue_avg, default: 'Issue Star Rating')
+
+        # Filter 2: Journal (comment) ratings only
+        add_available_filter 'star_rating_journal_avg',
+                             type: :float,
+                             name: I18n.t(:label_star_rating_journal_avg, default: 'Comment Star Rating')
+
+        # Filter 3: All ratings combined (issue + journals)
+        add_available_filter 'star_rating_all_avg',
+                             type: :float,
+                             name: I18n.t(:label_star_rating_all_avg, default: 'Total Star Rating')
       end
     end
 
-    # Override sql_for_field to handle star_rating_avg filter
-    def sql_for_star_rating_avg_field(field, operator, value)
-      # Subquery to calculate average rating for each issue
+    # Filter 1: Issue ratings only
+    def sql_for_star_rating_issue_avg_field(field, operator, value)
       avg_subquery = <<~SQL.squish
         (SELECT AVG(rr.score)
          FROM #{RateableRating.table_name} rr
@@ -21,29 +30,60 @@ module RedmineStarRating
          AND rr.rateable_id = #{Issue.table_name}.id)
       SQL
 
+      build_rating_sql(avg_subquery, operator, value)
+    end
+
+    # Filter 2: Journal (comment) ratings only
+    def sql_for_star_rating_journal_avg_field(field, operator, value)
+      avg_subquery = <<~SQL.squish
+        (SELECT AVG(rr.score)
+         FROM #{RateableRating.table_name} rr
+         WHERE rr.rateable_type = 'Journal'
+         AND rr.rateable_id IN (
+           SELECT j.id FROM #{Journal.table_name} j
+           WHERE j.journalized_type = 'Issue'
+           AND j.journalized_id = #{Issue.table_name}.id
+         ))
+      SQL
+
+      build_rating_sql(avg_subquery, operator, value)
+    end
+
+    # Filter 3: All ratings combined (issue + journals) - uses MIN (lowest rating)
+    def sql_for_star_rating_all_avg_field(field, operator, value)
+      min_subquery = <<~SQL.squish
+        (SELECT MIN(rr.score)
+         FROM #{RateableRating.table_name} rr
+         WHERE (rr.rateable_type = 'Issue' AND rr.rateable_id = #{Issue.table_name}.id)
+            OR (rr.rateable_type = 'Journal' AND rr.rateable_id IN (
+                  SELECT j.id FROM #{Journal.table_name} j
+                  WHERE j.journalized_type = 'Issue'
+                  AND j.journalized_id = #{Issue.table_name}.id
+                )))
+      SQL
+
+      build_rating_sql(min_subquery, operator, value)
+    end
+
+    private
+
+    def build_rating_sql(avg_subquery, operator, value)
       case operator
       when '='
-        # Equal to value
         "#{avg_subquery} = #{value.first.to_f}"
       when '>='
-        # Greater than or equal
         "#{avg_subquery} >= #{value.first.to_f}"
       when '<='
-        # Less than or equal
         "#{avg_subquery} <= #{value.first.to_f}"
       when '><'
-        # Between (value should have 2 elements)
         min_val = value[0].to_f
         max_val = value[1].to_f
         "#{avg_subquery} BETWEEN #{min_val} AND #{max_val}"
       when '*'
-        # Has rating (not null, at least one rating exists)
         "#{avg_subquery} IS NOT NULL"
       when '!*'
-        # No rating
         "#{avg_subquery} IS NULL"
       else
-        # Default: greater than or equal
         "#{avg_subquery} >= #{value.first.to_f}"
       end
     end
