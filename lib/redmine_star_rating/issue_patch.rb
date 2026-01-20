@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require_dependency 'issue'
-require_dependency 'journal'
-require_dependency 'issues_controller'
-
 module RedmineStarRating
   module IssuePatch
     def self.included(base)
@@ -58,6 +54,14 @@ module RedmineStarRating
 end
 
 # Apply patches
-Issue.include(RedmineStarRating::IssuePatch)
-Journal.include(RedmineStarRating::JournalPatch)
-IssuesController.include(RedmineStarRating::IssuesControllerPatch)
+Rails.application.config.after_initialize do
+  unless Issue.included_modules.include?(RedmineStarRating::IssuePatch)
+    Issue.include(RedmineStarRating::IssuePatch)
+  end
+  unless Journal.included_modules.include?(RedmineStarRating::JournalPatch)
+    Journal.include(RedmineStarRating::JournalPatch)
+  end
+  unless IssuesController.included_modules.include?(RedmineStarRating::IssuesControllerPatch)
+    IssuesController.include(RedmineStarRating::IssuesControllerPatch)
+  end
+end
